@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Minus, MessageCircle, ShoppingBag, Eye, Heart, Check, Sparkles } from 'lucide-react';
+import { Plus, Minus, MessageCircle, ShoppingBag, Eye, Star, Award, Check, Sparkles } from 'lucide-react';
 import { Product, UserProfile } from '../types';
 import { createProductWhatsAppLink } from '../utils/whatsapp';
 
@@ -7,7 +7,8 @@ interface ProductCardProps {
   product: Product;
   user: UserProfile | null;
   isFavorite?: boolean;
-  onToggleFavorite?: (productId: string) => void;
+  userRating?: number;
+  onOpenRate?: (product: Product) => void;
   onAddToCart: (product: Product, quantity: number) => void;
   onQuickView: (product: Product) => void;
 }
@@ -16,7 +17,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   product,
   user,
   isFavorite = false,
-  onToggleFavorite,
+  userRating,
+  onOpenRate,
   onAddToCart,
   onQuickView,
 }) => {
@@ -45,7 +47,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const directWhatsAppLink = createProductWhatsAppLink(product, user);
 
   return (
-    <div className="group bg-white rounded-3xl overflow-hidden border-2 border-[#FFE4E8] shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between hover:border-[#F472B6]">
+    <div className={`group bg-white rounded-3xl overflow-hidden border-2 transition-all duration-300 flex flex-col justify-between ${
+      isFavorite
+        ? 'border-[#E05A68] shadow-md ring-2 ring-[#FFE4E8]'
+        : 'border-[#FFE4E8] shadow-xs hover:shadow-lg hover:border-[#F472B6]'
+    }`}>
       {/* Big Product Image on Top */}
       <div
         onClick={() => onQuickView(product)}
@@ -76,29 +82,41 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           />
         )}
 
-        {/* Creative Badge */}
-        {product.badge && (
-          <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm text-[#E05A68] text-[11px] font-extrabold px-3 py-1 rounded-full shadow-xs border border-[#FFE4E8]">
-            {product.badge}
-          </div>
-        )}
+        {/* Top Badges */}
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
+          {product.badge && (
+            <div className="bg-white/95 backdrop-blur-sm text-[#E05A68] text-[11px] font-extrabold px-3 py-1 rounded-full shadow-xs border border-[#FFE4E8]">
+              {product.badge}
+            </div>
+          )}
 
-        {/* Action icons: Heart favorite + Eye */}
+          {isFavorite && (
+            <div className="bg-gradient-to-r from-[#E05A68] to-[#C84654] text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow-md flex items-center gap-1 border border-white">
+              <Award className="w-3.5 h-3.5 fill-white text-transparent" />
+              <span>¡Tu Favorito #1!</span>
+            </div>
+          )}
+        </div>
+
+        {/* Action icons: Star Rate + Quick View */}
         <div className="absolute top-3 right-3 flex items-center gap-1.5">
-          {onToggleFavorite && (
+          {onOpenRate && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onToggleFavorite(product.id);
+                onOpenRate(product);
               }}
-              title={isFavorite ? 'Quitar de favoritos' : 'Guardar en favoritos'}
-              className="w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm text-[#E05A68] hover:scale-110 flex items-center justify-center shadow-xs transition-transform cursor-pointer"
+              title="Calificar y elegir como favorito"
+              className={`h-8 px-2.5 rounded-full backdrop-blur-sm flex items-center gap-1 shadow-xs transition-all cursor-pointer ${
+                userRating
+                  ? 'bg-amber-500 text-white font-extrabold text-[11px]'
+                  : 'bg-white/95 text-[#F59E0B] hover:scale-105'
+              }`}
             >
-              <Heart
-                className={`w-4 h-4 transition-colors ${
-                  isFavorite ? 'fill-[#E05A68] text-[#E05A68]' : 'text-[#8C6D62]'
-                }`}
-              />
+              <Star className="w-4 h-4 fill-[#F59E0B] text-[#F59E0B]" />
+              <span className="text-[11px] font-extrabold">
+                {userRating ? `${userRating}★` : 'Calificar'}
+              </span>
             </button>
           )}
 
@@ -123,19 +141,39 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       {/* Content Section: Título, descripción y precio */}
       <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between bg-white">
         <div>
-          <h3
-            onClick={() => onQuickView(product)}
-            className="text-base sm:text-lg font-extrabold text-[#2C1810] leading-snug hover:text-[#E05A68] transition-colors cursor-pointer"
-          >
-            {product.name}
-          </h3>
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <h3
+              onClick={() => onQuickView(product)}
+              className="text-base sm:text-lg font-extrabold text-[#2C1810] leading-snug hover:text-[#E05A68] transition-colors cursor-pointer truncate"
+            >
+              {product.name}
+            </h3>
+          </div>
 
-          <p className="text-xs text-[#5C453C] mt-1.5 line-clamp-2 leading-relaxed font-medium">
+          {/* Product Star Rating indicator */}
+          <div className="flex items-center gap-1.5 my-1">
+            <div className="flex items-center text-[#F59E0B]">
+              <Star className="w-3.5 h-3.5 fill-[#F59E0B]" />
+              <span className="text-xs font-extrabold text-[#2C1810] ml-1">
+                {product.averageRating || 4.9}
+              </span>
+            </div>
+            <span className="text-[11px] text-[#8C6D62] font-semibold">
+              ({product.ratingCount || 30} reseñas)
+            </span>
+            {userRating && (
+              <span className="text-[10px] text-amber-700 bg-amber-50 font-bold px-1.5 py-0.2 rounded-md border border-amber-200">
+                Tu nota: {userRating}★
+              </span>
+            )}
+          </div>
+
+          <p className="text-xs text-[#5C453C] mt-1 line-clamp-2 leading-relaxed font-medium">
             {product.description}
           </p>
 
           {product.portions && (
-            <div className="flex items-center gap-1 mt-1 text-[11px] text-[#8B5CF6] font-bold">
+            <div className="flex items-center gap-1 mt-1.5 text-[11px] text-[#8B5CF6] font-bold">
               <Sparkles className="w-3 h-3" />
               <span>Rinde: {product.portions}</span>
             </div>

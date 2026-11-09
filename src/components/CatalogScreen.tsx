@@ -1,36 +1,48 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Sparkles, CakeSlice, Cookie, PartyPopper, Utensils, Clock, ChevronRight, Palette, Tag } from 'lucide-react';
-import { Product, UserProfile, ProductCategory } from '../types';
+import { Search, Sparkles, CakeSlice, Cookie, PartyPopper, Utensils, Clock, Palette, Star, Award } from 'lucide-react';
+import { Product, UserProfile, ProductCategory, ProductRating } from '../types';
 import { PRODUCTS } from '../data/products';
 import { ProductCard } from './ProductCard';
 import { ProductModal } from './ProductModal';
 import { FeaturedCard } from './FeaturedCard';
+import { RateProductModal } from './RateProductModal';
+import { PWAInstallButton } from './PWAInstallButton';
+import { trackPageView, trackEvent } from '../utils/analytics';
 
 interface CatalogScreenProps {
   user: UserProfile | null;
-  favorites: string[];
-  onToggleFavorite: (productId: string) => void;
+  favoriteProductId: string | null;
+  ratings: Record<string, ProductRating>;
+  onSaveRating: (productId: string, rating: number, comment?: string, setAsFavorite?: boolean) => void;
   onAddToCart: (product: Product, quantity: number) => void;
   onOpenRules: () => void;
+  onGoToRatingTab: () => void;
 }
 
 type FilterOption = 'todos' | ProductCategory;
 
 export const CatalogScreen: React.FC<CatalogScreenProps> = ({
   user,
-  favorites,
-  onToggleFavorite,
+  favoriteProductId,
+  ratings,
+  onSaveRating,
   onAddToCart,
   onOpenRules,
+  onGoToRatingTab,
 }) => {
   const [activeCategory, setActiveCategory] = useState<FilterOption>('todos');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [rateModalProduct, setRateModalProduct] = useState<Product | null>(null);
 
   // The featured product: Torta de Chocolate & Fudge Casero
   const featuredProduct = useMemo(() => {
     return PRODUCTS.find((p) => p.id === 'torta-chocolate') || PRODUCTS[0];
   }, []);
+
+  const favoriteProduct = useMemo(() => {
+    return PRODUCTS.find((p) => p.id === favoriteProductId) || null;
+  }, [favoriteProductId]);
 
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter((product) => {
@@ -44,6 +56,11 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({
     });
   }, [activeCategory, searchQuery]);
 
+  const handleCategoryClick = (catId: FilterOption) => {
+    setActiveCategory(catId);
+    trackEvent('filter_category', 'Catalog', catId);
+  };
+
   const categories: { id: FilterOption; label: string; icon: React.ReactNode }[] = [
     { id: 'todos', label: 'Todo el Menú', icon: <span>🧁</span> },
     { id: 'tortas', label: 'Tortas Decorativas', icon: <CakeSlice className="w-4 h-4 text-[#E05A68]" /> },
@@ -54,7 +71,7 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({
 
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-3 pb-24">
-      {/* Creative Welcome Banner */}
+      {/* Creative Welcome Banner with Favorite Highlight */}
       <section className="mb-4 bg-gradient-to-r from-[#FFE4E8]/60 via-white to-[#F3E8FF]/60 rounded-3xl p-4 sm:p-5 border-2 border-[#FFE4E8] shadow-xs">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -62,7 +79,7 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({
               <Palette className="w-5 h-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-sm sm:text-base font-extrabold text-[#2C1810]">
                   Tortas Decorativas & Ideas Creativas
                 </h1>
@@ -71,20 +88,34 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({
                 </span>
               </div>
               <p className="text-xs text-[#5C453C] font-medium mt-0.5">
-                ¡Personalizamos cualquier diseño con tus colores, fotos o personajes favoritos!
+                ¡Personalizamos cualquier diseño con tus colores o temática favorita!
               </p>
             </div>
           </div>
 
-          <div
-            onClick={onOpenRules}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-[#E05A68] text-xs font-bold border border-[#FFE4E8] hover:bg-[#FFE4E8] transition-colors cursor-pointer shrink-0"
-          >
-            <Clock className="w-3.5 h-3.5" />
-            <span>Horarios de Entrega</span>
+          <div className="flex items-center gap-2">
+            {/* Quick Favorite or Rate button */}
+            <button
+              onClick={onGoToRatingTab}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#E05A68] to-[#C84654] text-white text-xs font-extrabold hover:opacity-95 shadow-xs transition-all cursor-pointer shrink-0"
+            >
+              <Award className="w-3.5 h-3.5 fill-white text-transparent" />
+              <span>{favoriteProduct ? `Tu Favorito: ${favoriteProduct.name.slice(0, 15)}...` : 'Escoger tu Favorito'}</span>
+            </button>
+
+            <button
+              onClick={onOpenRules}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-[#E05A68] text-xs font-bold border border-[#FFE4E8] hover:bg-[#FFE4E8] transition-colors cursor-pointer shrink-0"
+            >
+              <Clock className="w-3.5 h-3.5" />
+              <span>Horarios</span>
+            </button>
           </div>
         </div>
       </section>
+
+      {/* PWA Install Banner (only appears if not installed yet) */}
+      <PWAInstallButton variant="banner" className="mb-4" />
 
       {/* Buscador: Una barra de búsqueda redondeada con texto "Buscar tortas, postres..." */}
       <section className="mb-4">
@@ -119,7 +150,7 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({
               <button
                 key={cat.id}
                 type="button"
-                onClick={() => setActiveCategory(cat.id)}
+                onClick={() => handleCategoryClick(cat.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all duration-200 cursor-pointer shadow-xs ${
                   isActive
                     ? 'bg-gradient-to-r from-[#E05A68] to-[#C84654] text-white shadow-md shadow-[#E05A68]/25 scale-102'
@@ -152,6 +183,9 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({
           <FeaturedCard
             product={featuredProduct}
             user={user}
+            isFavorite={favoriteProductId === featuredProduct.id}
+            userRating={ratings[featuredProduct.id]?.rating}
+            onOpenRate={(p) => setRateModalProduct(p)}
             onAddToCart={onAddToCart}
             onQuickView={(p) => setSelectedProduct(p)}
           />
@@ -199,8 +233,9 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({
                 key={product.id}
                 product={product}
                 user={user}
-                isFavorite={favorites.includes(product.id)}
-                onToggleFavorite={onToggleFavorite}
+                isFavorite={favoriteProductId === product.id}
+                userRating={ratings[product.id]?.rating}
+                onOpenRate={(p) => setRateModalProduct(p)}
                 onAddToCart={onAddToCart}
                 onQuickView={(p) => setSelectedProduct(p)}
               />
@@ -214,7 +249,22 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
         user={user}
+        isFavorite={selectedProduct ? favoriteProductId === selectedProduct.id : false}
+        userRating={selectedProduct ? ratings[selectedProduct.id]?.rating : undefined}
+        onOpenRate={(p) => setRateModalProduct(p)}
         onAddToCart={onAddToCart}
+      />
+
+      {/* Direct Rate Modal */}
+      <RateProductModal
+        product={rateModalProduct}
+        isOpen={Boolean(rateModalProduct)}
+        onClose={() => setRateModalProduct(null)}
+        user={user}
+        isCurrentFavorite={rateModalProduct ? favoriteProductId === rateModalProduct.id : false}
+        currentRating={rateModalProduct ? ratings[rateModalProduct.id]?.rating : undefined}
+        currentComment={rateModalProduct ? ratings[rateModalProduct.id]?.comment : undefined}
+        onSaveRating={onSaveRating}
       />
     </main>
   );

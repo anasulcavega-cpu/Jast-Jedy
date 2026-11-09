@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { ShoppingBag, MessageCircle, Sparkles, Check, Tag } from 'lucide-react';
+import { ShoppingBag, MessageCircle, Sparkles, Check, Tag, Star, Award } from 'lucide-react';
 import { Product, UserProfile } from '../types';
 import { createProductWhatsAppLink } from '../utils/whatsapp';
 
 interface FeaturedCardProps {
   product: Product;
   user: UserProfile | null;
+  isFavorite?: boolean;
+  userRating?: number;
+  onOpenRate?: (product: Product) => void;
   onAddToCart: (product: Product, quantity: number) => void;
   onQuickView: (product: Product) => void;
 }
@@ -13,6 +16,9 @@ interface FeaturedCardProps {
 export const FeaturedCard: React.FC<FeaturedCardProps> = ({
   product,
   user,
+  isFavorite = false,
+  userRating,
+  onOpenRate,
   onAddToCart,
   onQuickView,
 }) => {
@@ -26,7 +32,9 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-3xl overflow-hidden border-2 border-[#FFE4E8] shadow-md hover:shadow-xl transition-all duration-300">
+    <div className={`bg-white rounded-3xl overflow-hidden border-2 transition-all duration-300 ${
+      isFavorite ? 'border-[#E05A68] shadow-lg ring-2 ring-[#FFE4E8]' : 'border-[#FFE4E8] shadow-md hover:shadow-xl'
+    }`}>
       {/* Big Product Image on Top */}
       <div
         onClick={() => onQuickView(product)}
@@ -52,6 +60,13 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
             <Tag className="w-3 h-3" />
             <span>¡Precio Económico!</span>
           </div>
+
+          {isFavorite && (
+            <div className="bg-gradient-to-r from-[#E05A68] to-[#C84654] text-white text-xs font-extrabold px-3 py-1 rounded-full shadow-md flex items-center gap-1 border border-white">
+              <Award className="w-3.5 h-3.5 fill-white text-transparent" />
+              <span>¡Tu Favorito #1!</span>
+            </div>
+          )}
         </div>
 
         {/* Portion tag */}
@@ -61,9 +76,15 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
 
         {/* Bottom image overlay with title */}
         <div className="absolute bottom-4 left-4 right-4 text-white">
-          <span className="text-xs uppercase tracking-wider text-[#FCD34D] font-extrabold">
-            Especialidad de la Casa
-          </span>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs uppercase tracking-wider text-[#FCD34D] font-extrabold">
+              Especialidad de la Casa
+            </span>
+            <div className="flex items-center gap-1 text-[#FCD34D] text-xs font-extrabold bg-black/40 px-2 py-0.5 rounded-full">
+              <Star className="w-3.5 h-3.5 fill-[#FCD34D]" />
+              <span>{product.averageRating || 5.0} ({product.ratingCount || 48} reseñas)</span>
+            </div>
+          </div>
           <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight">
             {product.name}
           </h2>
@@ -73,9 +94,21 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
       {/* Content Section */}
       <div className="p-5 sm:p-6 space-y-4 bg-white">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <p className="text-xs sm:text-sm text-[#5C453C] leading-relaxed max-w-lg font-medium">
-            {product.description}
-          </p>
+          <div>
+            <p className="text-xs sm:text-sm text-[#5C453C] leading-relaxed max-w-lg font-medium">
+              {product.description}
+            </p>
+            {onOpenRate && (
+              <button
+                type="button"
+                onClick={() => onOpenRate(product)}
+                className="mt-2 text-xs font-extrabold text-[#E05A68] hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <Star className="w-3.5 h-3.5 fill-[#E05A68]" />
+                <span>{userRating ? `Tu calificación: ${userRating}★ (Editar)` : 'Calificar esta torta'}</span>
+              </button>
+            )}
+          </div>
 
           <div className="text-left sm:text-right shrink-0">
             <span className="text-[11px] text-[#8C6D62] block font-bold uppercase tracking-wider">

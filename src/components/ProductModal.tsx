@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, MessageCircle, ShoppingBag, Plus, Minus, Check, Heart, Sparkles, Tag } from 'lucide-react';
+import { X, MessageCircle, ShoppingBag, Plus, Minus, Check, Star, Award, Sparkles, Tag } from 'lucide-react';
 import { Product, UserProfile } from '../types';
 import { createProductWhatsAppLink, WHATSAPP_DISPLAY_PHONE } from '../utils/whatsapp';
 
@@ -7,6 +7,9 @@ interface ProductModalProps {
   product: Product | null;
   onClose: () => void;
   user: UserProfile | null;
+  isFavorite?: boolean;
+  userRating?: number;
+  onOpenRate?: (product: Product) => void;
   onAddToCart: (product: Product, quantity: number) => void;
 }
 
@@ -14,6 +17,9 @@ export const ProductModal: React.FC<ProductModalProps> = ({
   product,
   onClose,
   user,
+  isFavorite = false,
+  userRating,
+  onOpenRate,
   onAddToCart,
 }) => {
   const [quantity, setQuantity] = useState(1);
@@ -59,11 +65,19 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover"
           />
-          {product.badge && (
-            <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm text-[#E05A68] text-xs font-extrabold px-3 py-1 rounded-full shadow-xs border border-[#FFE4E8]">
-              {product.badge}
-            </div>
-          )}
+          <div className="absolute bottom-3 left-3 flex items-center gap-2">
+            {product.badge && (
+              <div className="bg-white/95 backdrop-blur-sm text-[#E05A68] text-xs font-extrabold px-3 py-1 rounded-full shadow-xs border border-[#FFE4E8]">
+                {product.badge}
+              </div>
+            )}
+            {isFavorite && (
+              <div className="bg-gradient-to-r from-[#E05A68] to-[#C84654] text-white text-xs font-extrabold px-3 py-1 rounded-full shadow-md flex items-center gap-1 border border-white">
+                <Award className="w-3.5 h-3.5 fill-white text-transparent" />
+                <span>¡Tu Favorito #1!</span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Content: Title, description and price */}
@@ -80,6 +94,38 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                 S/ {product.price.toFixed(2)}
               </span>
             </div>
+          </div>
+
+          {/* Rating bar & Quick rate button */}
+          <div className="flex items-center justify-between p-2.5 rounded-2xl bg-[#FFFDF9] border border-[#FFE4E8] my-2">
+            <div className="flex items-center gap-1.5">
+              <Star className="w-4 h-4 fill-[#F59E0B] text-[#F59E0B]" />
+              <span className="text-xs font-extrabold text-[#2C1810]">
+                {product.averageRating || 4.9}
+              </span>
+              <span className="text-xs text-[#8C6D62] font-semibold">
+                ({product.ratingCount || 30} calificaciones)
+              </span>
+              {userRating && (
+                <span className="text-[10px] bg-amber-50 text-amber-800 font-extrabold px-2 py-0.5 rounded-full border border-amber-200">
+                  Tu nota: {userRating}★
+                </span>
+              )}
+            </div>
+
+            {onOpenRate && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenRate(product);
+                }}
+                className="text-xs font-extrabold text-[#E05A68] hover:underline cursor-pointer flex items-center gap-1"
+              >
+                <Star className="w-3.5 h-3.5 fill-[#E05A68]" />
+                <span>Calificar este postre</span>
+              </button>
+            )}
           </div>
 
           <p className="text-sm text-[#5C453C] leading-relaxed my-3 font-medium">

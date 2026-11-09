@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { UserProfile, CartItem, Product, MainViewTab } from './types';
+import { UserProfile, CartItem, Product, MainViewTab, ProductRating } from './types';
 import { PRODUCTS } from './data/products';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { Header } from './components/Header';
 import { CatalogScreen } from './components/CatalogScreen';
-import { FavoritesView } from './components/FavoritesView';
+import { RatingAndFavoritesView } from './components/RatingAndFavoritesView';
 import { CotizadorView } from './components/CotizadorView';
 import { ContactView } from './components/ContactView';
 import { CartDrawer } from './components/CartDrawer';
@@ -12,10 +12,12 @@ import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { BottomNav } from './components/BottomNav';
 import { DeliveryRulesModal } from './components/DeliveryRulesModal';
 import { ProfileView } from './components/ProfileView';
+import { trackPageView, trackEvent, initGA } from './utils/analytics';
 
 const USER_STORAGE_KEY = 'dulce_tentacion_user';
 const CART_STORAGE_KEY = 'dulce_tentacion_cart';
-const FAVORITES_STORAGE_KEY = 'dulce_tentacion_favorites';
+const FAVORITE_PRODUCT_STORAGE_KEY = 'dulce_tentacion_top_favorite';
+const RATINGS_STORAGE_KEY = 'dulce_tentacion_ratings';
 
 export default function App() {
   const [user, setUser] = useState<UserProfile | null>(() => {
@@ -41,12 +43,32 @@ export default function App() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const [favorites, setFavorites] = useState<string[]>(() => {
+  // User's chosen #1 favorite dessert
+  const [favoriteProductId, setFavoriteProductId] = useState<string | null>(() => {
     try {
-      const saved = localStorage.getItem(FAVORITES_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : ['torta-chocolate', 'alfajores-coco'];
+      const saved = localStorage.getItem(FAVORITE_PRODUCT_STORAGE_KEY);
+      return saved !== null ? saved : 'torta-chocolate';
     } catch {
-      return ['torta-chocolate', 'alfajores-coco'];
+      return 'torta-chocolate';
+    }
+  });
+
+  // User's dessert ratings: productId -> ProductRating
+  const [ratings, setRatings] = useState<Record<string, ProductRating>>(() => {
+    try {
+      const saved = localStorage.getItem(RATINGS_STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+      // Default initial rating for top favorite
+      return {
+        'torta-chocolate': {
+          productId: 'torta-chocolate',
+          rating: 5,
+          comment: '¡Nuestra torta favorita! Húmeda, esponjosa y con fudge casero insuperable.',
+          date: '2026-11-08',
+        },
+      };
+    } catch {
+      return {};
     }
   });
 
@@ -59,7 +81,40 @@ export default function App() {
     }
   });
 
-  // Sync cart & favorites to localStorage
+  // Initialize GA4 once on mount
+  useEffect(() => {
+    initGA();
+  }, []);
+
+  // GA4 SPA Page View Tracking Hook: Tracks every internal view / tab transition
+  useEffect(() => {
+    let currentPath = '/catalogo';
+    let pageTitle = 'Catálogo de Postres';
+
+    if (currentScreen === 'welcome') {
+      currentPath = '/login';
+      pageTitle = 'Bienvenida e Inicio de Sesión - Dulce Tentación Jast🧁Jedy';
+    } else if (isProfileModalOpen) {
+      currentPath = '/perfil';
+      pageTitle = 'Mi Perfil de Cliente';
+    } else if (activeTab === 'postres') {
+      currentPath = '/catalogo';
+      pageTitle = 'Catálogo de Tortas & Postres';
+    } else if (activeTab === 'calificar') {
+      currentPath = '/calificar';
+      pageTitle = 'Escoge tu Favorito & Califica';
+    } else if (activeTab === 'cotizador') {
+      currentPath = '/cotizador';
+      pageTitle = 'Cotizador de Tortas & Eventos';
+    } else if (activeTab === 'contacto') {
+      currentPath = '/contacto';
+      pageTitle = 'Contacto & Horarios';
+    }
+
+    trackPageView(currentPath, pageTitle);
+  }, [currentScreen, activeTab, isProfileModalOpen]);
+
+  // Sync cart to localStorage
   useEffect(() => {
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
@@ -68,19 +123,59 @@ export default function App() {
     }
   }, [cartItems]);
 
+  // Sync favorite & ratings to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+      if (favoriteProductId) {
+        localStorage.setItem(FAVORITE_PRODUCT_STORAGE_KEY, favoriteProductId);
+      }
     } catch {
       // ignore
     }
-  }, [favorites]);
+  }, [favoriteProductId]);
 
-  const handleToggleFavorite = (productId: string) => {
-    setFavorites((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
+  useEffect(() => {
+    try {
+      localStorage.setItem(RATINGS_STORAGE_KEY, JSON.stringify(ratings));
+    } catch {
+      // ignore
+    }
+  }, [ratings]);
+
+  const handleSelectFavorite = (productId: string) => {
+    setFavoriteProductId(productId);
+    const prod = PRODUCTS.find((p) => p.id === productId);
+    trackEvent('set_top_favorite', 'User Preference', prod?.name || productId);
+  };
+
+  const handleSaveRating = (
+    productId: string,
+    rating: number,
+    comment?: string,
+    setAsFavorite?: boolean
+  ) => {
+    const newRatingObj: ProductRating = {
+      productId,
+      rating,
+      comment,
+      date: new Date().toISOString().split('T')[0],
+    };
+
+    setRatings((prev) => ({
+      ...prev,
+      [productId]: newRatingObj,
+    }));
+
+    if (setAsFavorite) {
+      setFavoriteProductId(productId);
+    }
+
+    const prod = PRODUCTS.find((p) => p.id === productId);
+    trackEvent(
+      'rate_product',
+      'User Ratings',
+      `${prod?.name || productId} - ${rating} stars`,
+      rating
     );
   };
 
@@ -91,6 +186,7 @@ export default function App() {
     } catch {
       // ignore
     }
+    trackEvent('login_complete', 'User', profile.name);
     setCurrentScreen('main');
     setActiveTab('postres');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -103,6 +199,7 @@ export default function App() {
     } catch {
       // ignore
     }
+    trackEvent('update_profile', 'User', updatedProfile.name);
   };
 
   const handleLogout = () => {
@@ -111,6 +208,7 @@ export default function App() {
     } catch {
       // ignore
     }
+    trackEvent('logout', 'User');
     setUser(null);
     setCurrentScreen('welcome');
     setIsProfileModalOpen(false);
@@ -131,6 +229,8 @@ export default function App() {
       }
       return [...prevItems, { product, quantity }];
     });
+
+    trackEvent('add_to_cart', 'Ecommerce', product.name, product.price * quantity);
   };
 
   const handleUpdateCartQuantity = (productId: string, quantity: number) => {
@@ -178,7 +278,7 @@ export default function App() {
             activeTab={activeTab}
             onTabChange={handleTabChange}
             cartCount={totalCartCount}
-            favoritesCount={favorites.length}
+            favoriteProductCount={favoriteProductId ? 1 : 0}
             onOpenCart={() => setIsCartOpen(true)}
             onOpenProfile={() => setIsProfileModalOpen(true)}
             onOpenRules={() => setIsRulesModalOpen(true)}
@@ -196,19 +296,23 @@ export default function App() {
             ) : activeTab === 'postres' ? (
               <CatalogScreen
                 user={user}
-                favorites={favorites}
-                onToggleFavorite={handleToggleFavorite}
+                favoriteProductId={favoriteProductId}
+                ratings={ratings}
+                onSaveRating={handleSaveRating}
                 onAddToCart={handleAddToCart}
                 onOpenRules={() => setIsRulesModalOpen(true)}
+                onGoToRatingTab={() => setActiveTab('calificar')}
               />
-            ) : activeTab === 'favoritos' ? (
-              <FavoritesView
-                favorites={favorites}
+            ) : activeTab === 'calificar' ? (
+              <RatingAndFavoritesView
                 allProducts={PRODUCTS}
                 user={user}
-                onAddToCart={handleAddToCart}
-                onQuickView={() => {}}
+                favoriteProductId={favoriteProductId}
+                ratings={ratings}
+                onSelectFavorite={handleSelectFavorite}
+                onRateProduct={handleSaveRating}
                 onGoToCatalog={() => setActiveTab('postres')}
+                onAddToCart={handleAddToCart}
               />
             ) : activeTab === 'cotizador' ? (
               <CotizadorView user={user} />
@@ -227,7 +331,7 @@ export default function App() {
           <BottomNav
             activeTab={activeTab}
             onTabChange={handleTabChange}
-            favoritesCount={favorites.length}
+            hasFavoriteSelected={Boolean(favoriteProductId)}
           />
 
           {/* Sliding Cart Drawer */}

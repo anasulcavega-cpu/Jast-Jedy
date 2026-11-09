@@ -13,6 +13,15 @@ export interface Product {
   imageUrl: string;
   portions?: string;
   featured?: boolean;
+  averageRating?: number;
+  ratingCount?: number;
+}
+
+export interface ProductRating {
+  productId: string;
+  rating: number; // 1 to 5 stars
+  comment?: string;
+  date: string;
 }
 
 export interface CartItem {
@@ -27,4 +36,4 @@ export interface UserProfile {
   age: string;
 }
 
-export type MainViewTab = 'postres' | 'favoritos' | 'cotizador' | 'contacto';
+export type MainViewTab = 'postres' | 'calificar' | 'cotizador' | 'contacto';

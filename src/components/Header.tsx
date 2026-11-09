@@ -1,13 +1,14 @@
 import React from 'react';
 import { Bell, UserCircle2, ShoppingBag } from 'lucide-react';
 import { UserProfile, BRAND_LOGO_URL, MainViewTab } from '../types';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface HeaderProps {
   user: UserProfile | null;
   activeTab: MainViewTab;
   onTabChange: (tab: MainViewTab) => void;
   cartCount: number;
-  favoritesCount: number;
+  favoriteProductCount: number;
   onOpenCart: () => void;
   onOpenProfile: () => void;
   onOpenRules: () => void;
@@ -18,7 +19,7 @@ export const Header: React.FC<HeaderProps> = ({
   activeTab,
   onTabChange,
   cartCount,
-  favoritesCount,
+  favoriteProductCount,
   onOpenCart,
   onOpenProfile,
   onOpenRules,
@@ -27,7 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   const topNavTabs: { id: MainViewTab; label: string; badge?: number }[] = [
     { id: 'postres', label: 'Catálogo' },
-    { id: 'favoritos', label: 'Favoritos', badge: favoritesCount },
+    { id: 'calificar', label: 'Calificar' },
     { id: 'cotizador', label: 'Cotizador' },
     { id: 'contacto', label: 'Contacto' },
   ];
@@ -56,8 +57,11 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Right: Bell, Profile, Cart with creative colors */}
+        {/* Right: Install App Button, Bell, Profile, Cart */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* PWA Install Button in top bar */}
+          <PWAInstallButton variant="header" />
+
           {/* Bell Icon (Horarios & Reglamentos) */}
           <button
             onClick={onOpenRules}

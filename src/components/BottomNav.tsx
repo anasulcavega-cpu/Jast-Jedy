@@ -1,23 +1,23 @@
 import React from 'react';
-import { Cake, Heart, Sparkles, MessageSquare } from 'lucide-react';
+import { Cake, Star, Sparkles, MessageSquare } from 'lucide-react';
 import { MainViewTab } from '../types';
 
 interface BottomNavProps {
   activeTab: MainViewTab;
   onTabChange: (tab: MainViewTab) => void;
-  favoritesCount?: number;
+  hasFavoriteSelected?: boolean;
 }
 
 export const BottomNav: React.FC<BottomNavProps> = ({
   activeTab,
   onTabChange,
-  favoritesCount = 0,
+  hasFavoriteSelected = false,
 }) => {
   const tabs: {
     id: MainViewTab;
     label: string;
     icon: React.ComponentType<{ className?: string }>;
-    badge?: number;
+    hasBadge?: boolean;
   }[] = [
     {
       id: 'postres',
@@ -25,10 +25,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({
       icon: Cake,
     },
     {
-      id: 'favoritos',
-      label: 'Favoritos',
-      icon: Heart,
-      badge: favoritesCount,
+      id: 'calificar',
+      label: 'Calificar',
+      icon: Star,
+      hasBadge: hasFavoriteSelected,
     },
     {
       id: 'cotizador',
@@ -75,9 +75,9 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                   }`}
                 />
 
-                {tab.badge !== undefined && tab.badge > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#E05A68] text-white text-[9px] font-extrabold rounded-full w-3.5 h-3.5 flex items-center justify-center">
-                    {tab.badge}
+                {tab.hasBadge && (
+                  <span className="absolute -top-1 -right-1 bg-[#F59E0B] text-white text-[9px] font-extrabold rounded-full w-3.5 h-3.5 flex items-center justify-center">
+                    ★
                   </span>
                 )}
               </div>

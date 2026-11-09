@@ -12,6 +12,8 @@ export const PRODUCTS: Product[] = [
     category: 'tortas',
     badge: '🏷️ ¡Súper Económica!',
     featured: true,
+    averageRating: 5.0,
+    ratingCount: 48,
     imageUrl: '/assets/aistudio/file__18__31594842.webp',
   },
   {
@@ -23,6 +25,8 @@ export const PRODUCTS: Product[] = [
     portions: '15 - 18 porciones',
     category: 'tortas',
     badge: '💡 Idea Creativa',
+    averageRating: 4.9,
+    ratingCount: 32,
     imageUrl: '/assets/aistudio/file__4__6d33e1fe.webp',
   },
   {
@@ -34,6 +38,8 @@ export const PRODUCTS: Product[] = [
     portions: '15 - 18 porciones',
     category: 'tortas',
     badge: '💡 Idea Creativa',
+    averageRating: 4.9,
+    ratingCount: 29,
     imageUrl: '/assets/aistudio/file__20__31ffaef0.webp',
   },
   {
@@ -45,6 +51,8 @@ export const PRODUCTS: Product[] = [
     portions: '16 - 20 porciones',
     category: 'tortas',
     badge: '💡 Idea Creativa',
+    averageRating: 5.0,
+    ratingCount: 36,
     imageUrl: '/assets/aistudio/file__6__6e5e89b5.webp',
   },
   {
@@ -56,6 +64,8 @@ export const PRODUCTS: Product[] = [
     portions: '12 - 15 porciones',
     category: 'tortas',
     badge: '💡 Idea Creativa',
+    averageRating: 4.8,
+    ratingCount: 22,
     imageUrl: '/assets/aistudio/file__2__2219bbbf.webp',
   },
   {
@@ -67,6 +77,8 @@ export const PRODUCTS: Product[] = [
     portions: '15 - 18 porciones',
     category: 'tortas',
     badge: '💡 Idea Creativa',
+    averageRating: 4.9,
+    ratingCount: 27,
     imageUrl: '/assets/aistudio/file__1__253e0dd2.webp',
   },
   {
@@ -78,6 +90,8 @@ export const PRODUCTS: Product[] = [
     portions: '12 - 15 porciones',
     category: 'tortas',
     badge: '🎨 Diseño Exclusivo',
+    averageRating: 5.0,
+    ratingCount: 41,
     imageUrl: '/assets/aistudio/file__24__10f2c658.webp',
   },
   {
@@ -89,6 +103,8 @@ export const PRODUCTS: Product[] = [
     portions: '12 - 15 porciones',
     category: 'tortas',
     badge: '🏷️ Económica',
+    averageRating: 4.8,
+    ratingCount: 19,
     imageUrl: '/assets/aistudio/file__23__6a220dba.webp',
   },
   {
@@ -100,6 +116,8 @@ export const PRODUCTS: Product[] = [
     portions: '10 - 12 porciones',
     category: 'tortas',
     badge: '🏷️ Económica',
+    averageRating: 4.7,
+    ratingCount: 15,
     imageUrl: '/assets/aistudio/file__15__b23ebb72.webp',
   },
 
@@ -113,6 +131,8 @@ export const PRODUCTS: Product[] = [
     portions: '25 unidades',
     category: 'alfajores',
     badge: '🏷️ Súper Económico',
+    averageRating: 5.0,
+    ratingCount: 64,
     imageUrl: '/assets/aistudio/file__25__1b24b67b.webp',
   },
   {
@@ -124,6 +144,8 @@ export const PRODUCTS: Product[] = [
     portions: '30 unidades surtidas',
     category: 'alfajores',
     badge: '🏷️ Económica',
+    averageRating: 4.9,
+    ratingCount: 38,
     imageUrl: '/assets/aistudio/file__9__e3d64f7d.webp',
   },
 
@@ -137,6 +159,8 @@ export const PRODUCTS: Product[] = [
     portions: '12 paletas creativas',
     category: 'bocaditos',
     badge: '💡 Idea Creativa',
+    averageRating: 4.9,
+    ratingCount: 26,
     imageUrl: '/assets/aistudio/file__5__5d059e4c.webp',
   },
   {
@@ -148,6 +172,8 @@ export const PRODUCTS: Product[] = [
     portions: '5 tartaletas',
     category: 'bocaditos',
     badge: '🏷️ Económico',
+    averageRating: 4.8,
+    ratingCount: 21,
     imageUrl: '/assets/aistudio/file__3__5c3191eb.webp',
   },
   {
@@ -159,6 +185,8 @@ export const PRODUCTS: Product[] = [
     portions: '6 vasitos individuales',
     category: 'bocaditos',
     badge: '🏷️ Económico',
+    averageRating: 4.9,
+    ratingCount: 33,
     imageUrl: '/assets/aistudio/file__21__82bb386c.webp',
   },
   {
@@ -170,6 +198,8 @@ export const PRODUCTS: Product[] = [
     portions: '8 - 10 porciones',
     category: 'bocaditos',
     badge: '🏷️ Económico',
+    averageRating: 4.8,
+    ratingCount: 18,
     imageUrl: '/assets/aistudio/file__22__dd2084aa.webp',
   },
   {
@@ -181,6 +211,8 @@ export const PRODUCTS: Product[] = [
     portions: '10 - 12 porciones',
     category: 'bocaditos',
     badge: '🏷️ Económico',
+    averageRating: 4.9,
+    ratingCount: 42,
     imageUrl: '/assets/aistudio/file__16__8f91dd28.webp',
   },
   {
@@ -192,6 +224,8 @@ export const PRODUCTS: Product[] = [
     portions: '24 trufas',
     category: 'bocaditos',
     badge: '🏷️ Económico',
+    averageRating: 5.0,
+    ratingCount: 52,
     imageUrl: '/assets/aistudio/file__17__7837591c.webp',
   },
   {
@@ -203,6 +237,8 @@ export const PRODUCTS: Product[] = [
     portions: '12 vasitos',
     category: 'bocaditos',
     badge: '🏷️ Económico',
+    averageRating: 4.8,
+    ratingCount: 17,
     imageUrl: '/assets/aistudio/file__14__c2f05f8d.webp',
   },
 
@@ -216,6 +252,8 @@ export const PRODUCTS: Product[] = [
     portions: '8 porciones grandes',
     category: 'salados',
     badge: '🏷️ ¡Súper Económica!',
+    averageRating: 4.9,
+    ratingCount: 39,
     imageUrl: '/assets/aistudio/file_e4369ca9.webp',
   },
   {
@@ -227,6 +265,8 @@ export const PRODUCTS: Product[] = [
     portions: '6 empanadas grandes',
     category: 'salados',
     badge: '🏷️ Económico',
+    averageRating: 4.8,
+    ratingCount: 25,
     imageUrl: '/assets/aistudio/file__19__79de2c57.webp',
   },
   {
@@ -238,6 +278,8 @@ export const PRODUCTS: Product[] = [
     portions: '30 unidades para cóctel',
     category: 'salados',
     badge: '🏷️ Económico',
+    averageRating: 4.9,
+    ratingCount: 31,
     imageUrl: '/assets/aistudio/file__10__1ea605c9.webp',
   },
 ];

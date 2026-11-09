@@ -3,6 +3,7 @@ import confetti from 'canvas-confetti';
 import { Phone, User, Heart, ArrowRight, Calendar, Clock, ShieldCheck, Truck } from 'lucide-react';
 import { UserProfile, BRAND_LOGO_URL } from '../types';
 import { TulipCelebration } from './TulipCelebration';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface WelcomeScreenProps {
   onSuccess: (profile: UserProfile) => void;
@@ -113,6 +114,10 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             <p className="text-[#5C453C] text-xs sm:text-sm mt-1.5 font-medium">
               Pastelería Fina, Tortas Creativas & Precios Económicos
             </p>
+
+            <div className="mt-3">
+              <PWAInstallButton variant="header" />
+            </div>
           </div>
 
           {/* Submitted State with Tulip Welcome & Delivery Rules */}
