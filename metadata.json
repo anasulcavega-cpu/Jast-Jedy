@@ -1,0 +1,8 @@
+{
+  "name": "Dulce Tentación Jast🧁Jedy - Pastelería & Repostería",
+  "description": "Deliciosas tortas artesanales, alfajores, cheesecakes, bocaditos y trufas para tus momentos más especiales. Pedidos directos por WhatsApp.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

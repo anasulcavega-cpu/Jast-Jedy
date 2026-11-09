@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Creative & Artistic Pastel Bakery Palette */
+    --color-cream-bg: #FFFDF9;
+    --color-creative-berry: #E05A68;
+    --color-creative-purple: #8B5CF6;
+    --color-caramel: #B45309;
+    --color-soft-pink: #FFE4E8;
+    --color-soft-lilac: #F3E8FF;
+    --color-dark-choco: #2C1810;
+    
+    font-family: 'Quicksand', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  body {
+    background-color: #FFFDF9;
+    color: #2C1810;
+    font-family: 'Quicksand', 'Poppins', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom scrollbar matching creative sweet tones */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFFDF9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #F472B6;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #E05A68;
+}
+
+/* Realistic Tulip Shower Animations */
+@keyframes tulipSway {
+  0% {
+    transform: translateY(-80px) rotate(0deg) scale(0.85);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  40% {
+    transform: translateY(35vh) translateX(25px) rotate(22deg) scale(1.05);
+  }
+  75% {
+    transform: translateY(75vh) translateX(-20px) rotate(-18deg) scale(0.95);
+  }
+  95% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(115vh) translateX(15px) rotate(45deg) scale(0.85);
+    opacity: 0;
+  }
+}
+
+.tulip-shower-item {
+  position: absolute;
+  top: -80px;
+  pointer-events: none;
+  user-select: none;
+  z-index: 50;
+  animation-name: tulipSway;
+  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-iteration-count: infinite;
+}
