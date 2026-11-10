@@ -114,10 +114,6 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             <p className="text-[#5C453C] text-xs sm:text-sm mt-1.5 font-medium">
               Pastelería Fina, Tortas Creativas & Precios Económicos
             </p>
-
-            <div className="mt-3">
-              <PWAInstallButton variant="header" />
-            </div>
           </div>
 
           {/* Submitted State with Tulip Welcome & Delivery Rules */}
@@ -135,6 +131,9 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                   Lluvia de tulipanes para darte la más cálida bienvenida 🌷
                 </p>
               </div>
+
+              {/* Opción destacada para instalar la App en el celular tras dar la bienvenida */}
+              <PWAInstallButton variant="welcome" showWhenInstalled={true} />
 
               {/* Delivery instructions & regulations */}
               <div className="bg-[#FFFDF9] rounded-2xl p-4 border-2 border-[#FFE4E8] space-y-2.5 text-xs text-[#2C1810]">
@@ -165,7 +164,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 onClick={handleContinueToCatalog}
                 className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-[#E05A68] to-[#C84654] hover:opacity-95 active:scale-98 text-white font-extrabold text-sm sm:text-base shadow-lg shadow-[#E05A68]/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
-                <span>Entrar a la Aplicación</span>
+                <span>Entrar a la Aplicación y Catálogo</span>
                 <ArrowRight className="w-4 h-4 ml-1" />
               </button>
             </div>
