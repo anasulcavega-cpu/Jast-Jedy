@@ -71,6 +71,9 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({
 
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-3 pb-24">
+      {/* Banner de instalación en el catálogo */}
+      <PWAInstallButton variant="banner" className="mb-3.5" />
+
       {/* Creative Welcome Banner with Favorite Highlight */}
       <section className="mb-4 bg-gradient-to-r from-[#FFE4E8]/60 via-white to-[#F3E8FF]/60 rounded-3xl p-4 sm:p-5 border-2 border-[#FFE4E8] shadow-xs">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">

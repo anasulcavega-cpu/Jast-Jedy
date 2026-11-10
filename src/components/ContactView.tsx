@@ -29,7 +29,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ user, onOpenRules }) =
           ¿Tienes una idea especial o quieres coordinar un pedido para tu fiesta? Estamos para ayudarte de forma personalizada con precios súper económicos.
         </p>
 
-        {/* Big WhatsApp CTA with +51 983 344 508 */}
+        {/* Big WhatsApp CTA with +51 987 415 813 */}
         <div className="pt-2">
           <a
             href={whatsappUrl}

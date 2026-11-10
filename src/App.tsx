@@ -29,14 +29,8 @@ export default function App() {
     }
   });
 
-  const [currentScreen, setCurrentScreen] = useState<'welcome' | 'main'>(() => {
-    try {
-      const saved = localStorage.getItem(USER_STORAGE_KEY);
-      return saved ? 'main' : 'welcome';
-    } catch {
-      return 'welcome';
-    }
-  });
+  // Always start on welcome screen so user sees the welcome & "Instalar App" option
+  const [currentScreen, setCurrentScreen] = useState<'welcome' | 'main'>('welcome');
 
   const [activeTab, setActiveTab] = useState<MainViewTab>('postres');
   const [isRulesModalOpen, setIsRulesModalOpen] = useState(false);

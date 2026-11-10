@@ -56,13 +56,7 @@ export function usePWAInstall() {
     };
   }, []);
 
-  const triggerInstall = async (): Promise<'accepted' | 'dismissed' | 'ios' | 'unsupported'> => {
-    // On iOS Safari, we must present the manual guide
-    if (isIOS) {
-      trackEvent('pwa_ios_guide_opened', 'PWA', 'iOS User opened install modal');
-      return 'ios';
-    }
-
+  const triggerInstall = async (): Promise<'accepted' | 'dismissed' | 'unsupported'> => {
     if (!deferredPrompt) {
       return 'unsupported';
     }

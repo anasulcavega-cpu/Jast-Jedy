@@ -174,7 +174,7 @@ export const CotizadorView: React.FC<CotizadorViewProps> = ({ user }) => {
           </span>
         </div>
 
-        {/* WhatsApp Quote CTA with +51 983 344 508 */}
+        {/* WhatsApp Quote CTA with +51 987 415 813 */}
         <button
           type="button"
           onClick={handleSendQuoteWhatsApp}

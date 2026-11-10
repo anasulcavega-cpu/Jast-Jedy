@@ -1,8 +1,8 @@
 import { CartItem, Product, UserProfile } from '../types';
 
 // Updated phone number explicitly provided by the user
-export const WHATSAPP_PHONE_RAW = '51983344508';
-export const WHATSAPP_DISPLAY_PHONE = '+51 983 344 508';
+export const WHATSAPP_PHONE_RAW = '51987415813';
+export const WHATSAPP_DISPLAY_PHONE = '+51 987 415 813';
 export const DEFAULT_WHATSAPP_MESSAGE = 'Hola, quiero hacer un pedido de postres';
 
 export function createGeneralWhatsAppLink(user?: UserProfile | null): string {

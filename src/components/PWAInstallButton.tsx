@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Download, Smartphone, Check } from 'lucide-react';
 import { usePWAInstall } from '../hooks/usePWAInstall';
-import { IOSInstallModal } from './IOSInstallModal';
 
 interface PWAInstallButtonProps {
   variant?: 'header' | 'floating' | 'banner' | 'welcome';
@@ -14,9 +13,7 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
   className = '',
   showWhenInstalled = false,
 }) => {
-  const { isInstallable, isInstalled, isIOS, isStandalone, triggerInstall } = usePWAInstall();
-  const [showModal, setShowModal] = useState(false);
-  const [modalPlatform, setModalPlatform] = useState<'ios' | 'android'>('ios');
+  const { isInstallable, isInstalled, isStandalone, triggerInstall } = usePWAInstall();
   const [installState, setInstallState] = useState<'idle' | 'installing' | 'installed'>('idle');
 
   // If already installed or running in standalone mode
@@ -43,31 +40,16 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
     return null;
   }
 
-  // If not welcome variant and not installable / not iOS, hide
-  if (variant !== 'welcome' && !isInstallable && !isIOS) {
+  // If not welcome variant and not installable, hide
+  if (variant !== 'welcome' && !isInstallable) {
     return null;
   }
 
   const handleClick = async () => {
-    if (isIOS) {
-      setModalPlatform('ios');
-      setShowModal(true);
-      return;
-    }
-
     setInstallState('installing');
     const result = await triggerInstall();
     if (result === 'accepted') {
       setInstallState('installed');
-    } else if (result === 'ios') {
-      setModalPlatform('ios');
-      setShowModal(true);
-      setInstallState('idle');
-    } else if (result === 'unsupported') {
-      // Guide modal for Android/Desktop browsers when prompt is not yet ready
-      setModalPlatform('android');
-      setShowModal(true);
-      setInstallState('idle');
     } else {
       setInstallState('idle');
     }
@@ -159,13 +141,6 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
           <span>Descargar App</span>
         </button>
       )}
-
-      {/* Guide Modal for iOS Safari or Android/Browser */}
-      <IOSInstallModal
-        isOpen={showModal}
-        platform={modalPlatform}
-        onClose={() => setShowModal(false)}
-      />
     </>
   );
 };

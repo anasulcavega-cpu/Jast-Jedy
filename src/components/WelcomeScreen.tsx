@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
-import { Phone, User, Heart, ArrowRight, Calendar, Clock, ShieldCheck, Truck } from 'lucide-react';
+import { Phone, User, Heart, Calendar, Clock, Truck, Download, Check, ArrowRight } from 'lucide-react';
 import { UserProfile, BRAND_LOGO_URL } from '../types';
 import { TulipCelebration } from './TulipCelebration';
-import { PWAInstallButton } from './PWAInstallButton';
+import { usePWAInstall } from '../hooks/usePWAInstall';
+import { trackEvent } from '../utils/analytics';
 
 interface WelcomeScreenProps {
   onSuccess: (profile: UserProfile) => void;
@@ -20,6 +21,8 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   const [errors, setErrors] = useState<{ name?: string; phone?: string; age?: string }>({});
   const [submittedProfile, setSubmittedProfile] = useState<UserProfile | null>(null);
   const [showTulips, setShowTulips] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
+  const { deferredPrompt, isInstalled, isStandalone } = usePWAInstall();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +41,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
     if (!cleanPhone) {
       newErrors.phone = 'Por favor ingresa tu número de teléfono';
     } else if (cleanPhone.replace(/\D/g, '').length < 8) {
-      newErrors.phone = 'Ingresa un celular válido (ej. 983 344 508)';
+      newErrors.phone = 'Ingresa un celular válido (ej. 987 415 813)';
     }
 
     const ageNum = parseInt(cleanAge, 10);
@@ -75,10 +78,32 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
     }
   };
 
-  const handleContinueToCatalog = () => {
-    if (submittedProfile) {
-      onSuccess(submittedProfile);
+  const handleInstallAndEnter = async () => {
+    setIsInstalling(true);
+
+    if (deferredPrompt) {
+      try {
+        await deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if (choice.outcome === 'accepted') {
+          trackEvent('pwa_install_accepted', 'PWA', 'User installed app to unlock catalog');
+        }
+      } catch (err) {
+        console.warn('PWA install prompt error:', err);
+      }
     }
+
+    try {
+      localStorage.setItem('jast_jedy_installed', 'true');
+    } catch {
+      // safe fallback
+    }
+
+    setTimeout(() => {
+      if (submittedProfile) {
+        onSuccess(submittedProfile);
+      }
+    }, 350);
   };
 
   return (
@@ -116,11 +141,11 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             </p>
           </div>
 
-          {/* Submitted State with Tulip Welcome & Delivery Rules */}
+          {/* Submitted State: Welcome Greeting & Obligatory Install to View Catalog */}
           {submittedProfile ? (
-            <div className="space-y-4 animate-scale-up">
+            <div className="space-y-4 animate-scale-up text-center">
               {/* Tulip Welcome Greeting */}
-              <div className="text-center bg-gradient-to-r from-[#FFE4E8]/80 to-[#F3E8FF]/80 p-5 rounded-2xl border-2 border-[#FFE4E8] relative overflow-hidden">
+              <div className="bg-gradient-to-r from-[#FFE4E8]/80 to-[#F3E8FF]/80 p-5 rounded-2xl border-2 border-[#FFE4E8] relative overflow-hidden">
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2C1810] tracking-tight">
                   ¡Bienvenida {submittedProfile.name}!
                 </h2>
@@ -132,41 +157,36 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 </p>
               </div>
 
-              {/* Opción destacada para instalar la App en el celular tras dar la bienvenida */}
-              <PWAInstallButton variant="welcome" showWhenInstalled={true} />
-
-              {/* Delivery instructions & regulations */}
-              <div className="bg-[#FFFDF9] rounded-2xl p-4 border-2 border-[#FFE4E8] space-y-2.5 text-xs text-[#2C1810]">
-                <div className="flex items-center gap-2 font-extrabold text-sm text-[#2C1810]">
-                  <Clock className="w-4 h-4 text-[#E05A68]" />
-                  <span>Horarios de Entrega & Reglamentos</span>
+              {/* Obligatory Install Card to View Catalog */}
+              <div className="p-6 rounded-3xl bg-[#FFFDF9] border-2 border-[#FFE4E8] shadow-sm space-y-4">
+                <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-[#E05A68] to-[#F472B6] text-white flex items-center justify-center shadow-md shadow-[#E05A68]/30">
+                  <Download className="w-8 h-8 stroke-[2.3]" />
                 </div>
 
-                <div className="space-y-1.5 pl-1">
-                  <div className="flex items-start gap-2">
-                    <span className="text-[#E05A68] font-bold">•</span>
-                    <span><strong>Horario de Despacho:</strong> Lunes a Sábado de 9:00 am a 8:00 pm. Domingos de 10:00 am a 4:00 pm.</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-[#E05A68] font-bold">•</span>
-                    <span><strong>Anticipación de Pedidos:</strong> Tortas regulares con mínimo 24h de anticipación; tortas temáticas y creativas con 48h a 72h.</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-[#E05A68] font-bold">•</span>
-                    <span><strong>Reserva y Pago:</strong> 50% de anticipo para programar el horneado artesanal y 50% al entregar.</span>
-                  </div>
+                <div>
+                  <h3 className="text-xl font-black text-[#2C1810]">
+                    Instalar App
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[#5C453C] font-bold mt-1.5 max-w-xs mx-auto">
+                    Para continuar y ver el catálogo con los productos, presiona el botón para instalar la aplicación en tu celular.
+                  </p>
                 </div>
+
+                {/* Only button: "Instalar App" - Mandatory to view catalog */}
+                <button
+                  type="button"
+                  onClick={handleInstallAndEnter}
+                  disabled={isInstalling}
+                  className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-[#E05A68] to-[#C84654] hover:opacity-95 active:scale-98 text-white font-black text-base shadow-xl shadow-[#E05A68]/35 flex items-center justify-center gap-2.5 transition-all cursor-pointer animate-pulse hover:animate-none"
+                >
+                  <Download className="w-5 h-5 stroke-[2.5]" />
+                  <span>{isInstalling ? 'Instalando App...' : 'Instalar App para ver el Catálogo'}</span>
+                </button>
+
+                <p className="text-xs text-[#E05A68] font-black tracking-wide">
+                  (Paso obligatorio si quieres continuar para ver el catálogo con los productos)
+                </p>
               </div>
-
-              {/* Primary button in berry gradient */}
-              <button
-                type="button"
-                onClick={handleContinueToCatalog}
-                className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-[#E05A68] to-[#C84654] hover:opacity-95 active:scale-98 text-white font-extrabold text-sm sm:text-base shadow-lg shadow-[#E05A68]/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
-              >
-                <span>Entrar a la Aplicación y Catálogo</span>
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </button>
             </div>
           ) : (
             /* Mandatory Login Form (no guest option) */
@@ -265,7 +285,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                         setPhone(e.target.value);
                         if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
                       }}
-                      placeholder="Ej. 983 344 508"
+                      placeholder="Ej. 987 415 813"
                       className={`w-full pl-10 pr-4 py-3 rounded-xl bg-[#FFFDF9] border-2 ${
                         errors.phone ? 'border-red-400' : 'border-[#FFE4E8] focus:border-[#E05A68]'
                       } text-[#2C1810] placeholder-[#8C6D62]/60 text-sm focus:outline-none transition-all font-semibold`}
@@ -309,7 +329,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
 
         {/* Brand footer note */}
         <p className="text-center text-xs text-[#8C6D62] mt-4 font-semibold">
-          Dulce Tentación Jast🧁Jedy • Pedidos al WhatsApp +51 983 344 508
+          Dulce Tentación Jast🧁Jedy • Pedidos al WhatsApp +51 987 415 813
         </p>
       </div>
     </div>
