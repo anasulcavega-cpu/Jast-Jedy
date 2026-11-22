@@ -113,8 +113,8 @@ export const RateProductModal: React.FC<RateProductModalProps> = ({
               <h4 className="font-extrabold text-sm text-[#2C1810] truncate">
                 {product.name}
               </h4>
-              <p className="text-[#E05A68] font-bold text-xs tabular-nums">
-                S/ {product.price.toFixed(2)}
+              <p className="text-[#8C6D62] font-semibold text-xs">
+                {product.unit}
               </p>
             </div>
           </div>

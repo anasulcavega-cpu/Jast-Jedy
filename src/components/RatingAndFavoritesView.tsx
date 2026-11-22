@@ -110,7 +110,7 @@ export const RatingAndFavoritesView: React.FC<RatingAndFavoritesViewProps> = ({
             >
               {allProducts.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.name} — S/ {p.price.toFixed(2)} ({p.category.toUpperCase()})
+                  {p.name} ({p.category.toUpperCase()})
                 </option>
               ))}
             </select>
@@ -137,9 +137,6 @@ export const RatingAndFavoritesView: React.FC<RatingAndFavoritesViewProps> = ({
                   {selectedProduct.description}
                 </p>
                 <div className="flex items-center justify-center sm:justify-start gap-3 mt-2 text-xs">
-                  <span className="font-extrabold text-[#E05A68] text-sm tabular-nums">
-                    S/ {selectedProduct.price.toFixed(2)}
-                  </span>
                   <span className="text-[#8C6D62] font-semibold">
                     {selectedProduct.unit}
                   </span>

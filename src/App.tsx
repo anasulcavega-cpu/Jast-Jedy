@@ -224,7 +224,7 @@ export default function App() {
       return [...prevItems, { product, quantity }];
     });
 
-    trackEvent('add_to_cart', 'Ecommerce', product.name, product.price * quantity);
+    trackEvent('add_to_cart', 'Ecommerce', product.name, quantity);
   };
 
   const handleUpdateCartQuantity = (productId: string, quantity: number) => {

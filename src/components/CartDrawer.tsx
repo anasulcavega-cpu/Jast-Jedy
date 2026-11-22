@@ -28,16 +28,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
   if (!isOpen) return null;
 
-  const total = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
-
   const totalUnits = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const whatsappCheckoutLink = createCartWhatsAppLink(
     items,
-    total,
     user,
     orderNotes
   );
@@ -147,8 +141,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       </button>
                     </div>
 
-                    <p className="text-xs text-[#E05A68] tabular-nums font-bold">
-                      S/ {item.product.price.toFixed(2)} c/u
+                    <p className="text-xs text-[#8C6D62] font-semibold">
+                      {item.product.unit}
                     </p>
 
                     <div className="flex items-center justify-between mt-2">
@@ -175,9 +169,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                         </button>
                       </div>
 
-                      {/* Subtotal */}
-                      <span className="text-xs font-extrabold text-[#2C1810] tabular-nums">
-                        S/ {(item.product.price * item.quantity).toFixed(2)}
+                      {/* Quantity label */}
+                      <span className="text-xs font-bold text-[#E05A68]">
+                        {item.quantity} {item.quantity === 1 ? 'unidad' : 'unidades'}
                       </span>
                     </div>
                   </div>
@@ -202,11 +196,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 />
               </div>
 
-              {/* Total Row */}
-              <div className="flex items-baseline justify-between pt-1">
-                <span className="text-sm font-extrabold text-[#8C6D62]">Total económico:</span>
-                <span className="text-2xl font-extrabold text-[#E05A68] tabular-nums">
-                  S/ {total.toFixed(2)}
+              {/* Summary Row */}
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-xs font-extrabold text-[#8C6D62]">
+                  {totalUnits} {totalUnits === 1 ? 'producto seleccionado' : 'productos seleccionados'}
+                </span>
+                <span className="text-xs font-extrabold text-[#E05A68]">
+                  Consulta precio por WhatsApp
                 </span>
               </div>
 

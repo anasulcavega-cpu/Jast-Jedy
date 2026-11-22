@@ -58,7 +58,7 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
 
           <div className="bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-xs flex items-center gap-1">
             <Tag className="w-3 h-3" />
-            <span>¡Precio Económico!</span>
+            <span>¡100% Artesanal!</span>
           </div>
 
           {isFavorite && (
@@ -93,36 +93,20 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
 
       {/* Content Section */}
       <div className="p-5 sm:p-6 space-y-4 bg-white">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <p className="text-xs sm:text-sm text-[#5C453C] leading-relaxed max-w-lg font-medium">
-              {product.description}
-            </p>
-            {onOpenRate && (
-              <button
-                type="button"
-                onClick={() => onOpenRate(product)}
-                className="mt-2 text-xs font-extrabold text-[#E05A68] hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <Star className="w-3.5 h-3.5 fill-[#E05A68]" />
-                <span>{userRating ? `Tu calificación: ${userRating}★ (Editar)` : 'Calificar esta torta'}</span>
-              </button>
-            )}
-          </div>
-
-          <div className="text-left sm:text-right shrink-0">
-            <span className="text-[11px] text-[#8C6D62] block font-bold uppercase tracking-wider">
-              ¡Oferta Especial!
-            </span>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-extrabold text-[#E05A68] tabular-nums">
-                S/ {product.price.toFixed(2)}
-              </span>
-              <span className="text-xs text-[#8C6D62] line-through font-semibold">
-                S/ 55.00
-              </span>
-            </div>
-          </div>
+        <div>
+          <p className="text-xs sm:text-sm text-[#5C453C] leading-relaxed font-medium">
+            {product.description}
+          </p>
+          {onOpenRate && (
+            <button
+              type="button"
+              onClick={() => onOpenRate(product)}
+              className="mt-2 text-xs font-extrabold text-[#E05A68] hover:underline flex items-center gap-1 cursor-pointer"
+            >
+              <Star className="w-3.5 h-3.5 fill-[#E05A68]" />
+              <span>{userRating ? `Tu calificación: ${userRating}★ (Editar)` : 'Calificar esta torta'}</span>
+            </button>
+          )}
         </div>
 
         {/* Action Buttons: Agregar + Big Pedir por WhatsApp in vibrant creative berry */}

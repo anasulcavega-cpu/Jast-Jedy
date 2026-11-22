@@ -16,13 +16,12 @@ export function createGeneralWhatsAppLink(user?: UserProfile | null): string {
 
 export function createProductWhatsAppLink(product: Product, user?: UserProfile | null): string {
   const greeting = user?.name ? `Hola, soy ${user.name.trim()}${user.age ? ` (${user.age} años)` : ''}` : 'Hola';
-  const text = `${greeting}. Quiero pedir por WhatsApp: *${product.name}* (Precio: S/ ${product.price.toFixed(2)}) de Dulce Tentación Jast🧁Jedy. ¿Tienen disponibilidad?`;
+  const text = `${greeting}. Quiero pedir por WhatsApp: *${product.name}* de Dulce Tentación Jast🧁Jedy. ¿Me brindan información sobre el precio y disponibilidad?`;
   return `https://wa.me/${WHATSAPP_PHONE_RAW}?text=${encodeURIComponent(text)}`;
 }
 
 export function createCartWhatsAppLink(
   items: CartItem[],
-  total: number,
   user?: UserProfile | null,
   orderNotes?: string
 ): string {
@@ -39,17 +38,17 @@ export function createCartWhatsAppLink(
   const itemsList = items
     .map(
       (item) =>
-        `• ${item.quantity}x *${item.product.name}* (S/ ${(item.product.price * item.quantity).toFixed(2)})${item.notes ? ` [Nota: ${item.notes}]` : ''}`
+        `• ${item.quantity}x *${item.product.name}*${item.notes ? ` [Nota: ${item.notes}]` : ''}`
     )
     .join('\n');
 
-  let message = `¡Hola! ${clientInfo}. Deseo realizar el siguiente pedido en *Dulce Tentación Jast🧁Jedy*:\n\n${itemsList}\n\n*Total estimado:* S/ ${total.toFixed(2)}`;
+  let message = `¡Hola! ${clientInfo}. Deseo realizar el siguiente pedido en *Dulce Tentación Jast🧁Jedy*:\n\n${itemsList}`;
 
   if (orderNotes && orderNotes.trim()) {
-    message += `\n*Detalles de entrega:* ${orderNotes.trim()}`;
+    message += `\n\n*Detalles de entrega:* ${orderNotes.trim()}`;
   }
 
-  message += '\n\nHe leído las instrucciones de entrega. ¿Me confirman la disponibilidad y métodos de pago? ¡Muchas gracias!';
+  message += '\n\nHe leído las instrucciones de entrega. ¿Me confirman el precio, disponibilidad y métodos de pago? ¡Muchas gracias!';
 
   return `https://wa.me/${WHATSAPP_PHONE_RAW}?text=${encodeURIComponent(message)}`;
 }

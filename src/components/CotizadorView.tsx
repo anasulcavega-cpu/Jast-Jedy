@@ -15,20 +15,12 @@ export const CotizadorView: React.FC<CotizadorViewProps> = ({ user }) => {
   const [deliveryDate, setDeliveryDate] = useState('');
   const [includeBocaditos, setIncludeBocaditos] = useState(false);
 
-  // Price calculation
-  const portionCount = parseInt(portions, 10);
-  let basePrice = portionCount * 4.8;
-  if (flavor.includes('Red Velvet') || flavor.includes('Maracuyá')) basePrice += 10;
-  if (includeBocaditos) basePrice += 45; // bandeja de bocaditos complementaria
-
-  const totalEstimate = Math.max(50, Math.round(basePrice));
-
   const handleSendQuoteWhatsApp = () => {
     const clientName = user?.name ? user.name.trim() : 'Cliente';
     const ageText = user?.age ? ` (${user.age} años)` : '';
     const phoneText = user?.phone ? ` - Tel: ${user.phone}` : '';
 
-    const text = `¡Hola! Soy *${clientName}*${ageText}${phoneText}. Deseo cotizar una torta personalizada en *Dulce Tentación Jast🧁Jedy*:\n\n• *Tipo de Evento:* ${eventType}\n• *Porciones:* ${portions} porciones\n• *Sabor deseado:* ${flavor}\n• *Temática / Dedicatoria:* ${themeText || 'Por coordinar'}\n• *Fecha estimada:* ${deliveryDate || 'Por coordinar'}\n• *Bocaditos adicionales:* ${includeBocaditos ? 'Sí (Bandeja surtida)' : 'No'}\n\n*Presupuesto aproximado en app:* S/ ${totalEstimate}.00\n\n¿Tienen disponibilidad para esta fecha? ¡Gracias!`;
+    const text = `¡Hola! Soy *${clientName}*${ageText}${phoneText}. Deseo cotizar una torta personalizada en *Dulce Tentación Jast🧁Jedy*:\n\n• *Tipo de Evento:* ${eventType}\n• *Porciones:* ${portions} porciones\n• *Sabor deseado:* ${flavor}\n• *Temática / Dedicatoria:* ${themeText || 'Por coordinar'}\n• *Fecha estimada:* ${deliveryDate || 'Por coordinar'}\n• *Bocaditos adicionales:* ${includeBocaditos ? 'Sí (Bandeja surtida)' : 'No'}\n\n¿Me podrían brindar el precio y disponibilidad para esta fecha? ¡Gracias!`;
 
     const url = `https://wa.me/${WHATSAPP_PHONE_RAW}?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
@@ -153,7 +145,7 @@ export const CotizadorView: React.FC<CotizadorViewProps> = ({ user }) => {
           />
           <div className="text-xs">
             <span className="font-extrabold text-[#2C1810] block">
-              Añadir bandeja surtida de bocaditos para fiesta (+S/ 35.00)
+              Añadir bandeja surtida de bocaditos para fiesta
             </span>
             <span className="text-[#5C453C] font-medium">
               Alfajorcitos, trufas de cacao y mini tartaletas para acompañar
@@ -161,16 +153,18 @@ export const CotizadorView: React.FC<CotizadorViewProps> = ({ user }) => {
           </div>
         </label>
 
-        {/* Total Estimate Calculation */}
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-[#FFE4E8]/60 to-[#F3E8FF]/60 border-2 border-[#FFE4E8] flex items-baseline justify-between pt-3">
+        {/* Summary Note */}
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-[#FFE4E8]/60 to-[#F3E8FF]/60 border-2 border-[#FFE4E8] flex items-center justify-between gap-2">
           <div>
-            <span className="text-xs text-[#8C6D62] font-extrabold block">Presupuesto Económico Estimado:</span>
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#E05A68] tabular-nums">
-              S/ {totalEstimate}.00
+            <span className="text-xs text-[#2C1810] font-extrabold block">
+              Resumen listo para cotizar
+            </span>
+            <span className="text-[11px] text-[#5C453C] font-medium">
+              {eventType} • {portions} porciones • {flavor}
             </span>
           </div>
-          <span className="text-[11px] text-[#5C453C] font-medium">
-            *Precio accesible sujeto a confirmación
+          <span className="text-[11px] text-[#E05A68] font-extrabold shrink-0">
+            Precio directo por WhatsApp
           </span>
         </div>
 

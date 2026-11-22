@@ -180,17 +180,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           )}
         </div>
 
-        {/* Price & Actions */}
+        {/* Actions */}
         <div className="mt-4 pt-3 border-t border-[#FFE4E8] space-y-2.5">
-          <div className="flex items-baseline justify-between">
-            <span className="text-xs text-[#8C6D62] font-semibold">Precio económico:</span>
-            <div className="flex items-baseline gap-1">
-              <span className="text-xl font-extrabold text-[#E05A68] tabular-nums">
-                S/ {product.price.toFixed(2)}
-              </span>
-            </div>
-          </div>
-
           {/* Stepper + Agregar Button */}
           <div className="flex items-center gap-2">
             <div className="flex items-center bg-[#FFFDF9] border border-[#FFE4E8] rounded-xl p-0.5">

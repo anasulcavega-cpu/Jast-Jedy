@@ -80,20 +80,13 @@ export const ProductModal: React.FC<ProductModalProps> = ({
           </div>
         </div>
 
-        {/* Content: Title, description and price */}
+        {/* Content: Title and description */}
         <div className="p-6">
-          <div className="flex items-start justify-between gap-4 mb-2">
-            <div>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-[#2C1810]">
-                {product.name}
-              </h3>
-              <p className="text-xs text-[#8C6D62] mt-0.5 font-semibold">{product.unit}</p>
-            </div>
-            <div className="text-right">
-              <span className="text-2xl sm:text-3xl font-extrabold text-[#E05A68] tabular-nums">
-                S/ {product.price.toFixed(2)}
-              </span>
-            </div>
+          <div className="mb-2">
+            <h3 className="text-xl sm:text-2xl font-extrabold text-[#2C1810]">
+              {product.name}
+            </h3>
+            <p className="text-xs text-[#8C6D62] mt-0.5 font-semibold">{product.unit}</p>
           </div>
 
           {/* Rating bar & Quick rate button */}
@@ -140,7 +133,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             </div>
             <div className="flex items-center gap-2 text-[#2C1810] font-semibold">
               <Tag className="w-4 h-4 text-emerald-600" />
-              <span>¡Precio Económico!</span>
+              <span>¡Cotiza por WhatsApp!</span>
             </div>
           </div>
 
@@ -185,7 +178,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                 ) : (
                   <>
                     <ShoppingBag className="w-4 h-4" />
-                    <span>Agregar (S/ {(product.price * quantity).toFixed(2)})</span>
+                    <span>Agregar ({quantity})</span>
                   </>
                 )}
               </button>
